@@ -1,90 +1,360 @@
-# How to MyST, without being mystified 🧙
+---
+exports:
+  - format: docx
+  - format: pdf
+    template: volcanica
+    article_type: Report
+---
+# L'environnement Windows/Linux pour l'ingénieur
 
-A tutorial to evolve markdown documents and notebooks into structured data
-
-**Authors:** Rowan Cockett<sup>1,2</sup> \
-**Affiliations:** <sup>1</sup>Executable Books, <sup>2</sup> Curvenote \
+**Authors:** Prof. Yves Chevallier
+**Affiliations:** Haute École d'Ingénierie et de Gestion du Canton de Vaud
 **License:** CC-BY
 
 **Abstract**
 
-We introduce, a set of open-source, community-driven tools for MyST Markdown ([myst.tools](https://myst.tools)) designed for scientific communication, including a powerful authoring framework that supports blogs, online books, scientific papers, reports and journals articles.
+Vous êtes étudiant et vous êtes perdus avec l'utilisation de Python, LaTeX, Git, etc. sous Windows, Linux ou encore Docker Ce document est fait pour vous. Il vous guidera dans l'installation et l'utilisation de ces outils. L'objectif est de comprendre les avantages et les inconvénients de chaque outil et de vous permettre de les utiliser de manière efficace.
 
-## Background
+## Préambule
 
-Scientific communication today is designed around print documents and pay-walled access to content. Over the last decade, the open-science movement has accelerated the use of pre-print services and data archives that are vastly improving the accessibility of scientific content. However, these systems are not designed for communicating modern scientific outputs, which encompasses **so much more** than a paper-centric model of the scholarly literature.
+Les applications utilisées typiquement par un ingénieur aujourd'hui sont Python, Git, GCC, LaTeX ou même Docker. Ces applications ont un point commun, c'est qu'elles ont d'abord été écrites pour un environnement **POSIX** (Unix).
 
-> We believe how we share and communicate scientific knowledge should evolve past the status quo of print-based publishing and all the limitations of paper.
+**POSIX** est une norme internationale (IEEE 1003) qui définit l'interface de programmation d'un système d'exploitation. Elle est basée sur UNIX. Elle est utilisée pour les systèmes d'exploitation de type UNIX. Windows n'est pas un système qui respecte cette norme ce qui complique l'utilisation de ces applications.
 
-The communication and collaboration tools that we are building in the ExecutableBooks project are built to follow the FORCE11 recommendations (Bourne _et al._, 2012). Specifically:
+Afin de pouvoir porter Python ou Git sous Windows, il a fallu ajouter une couche d'abstraction pour rendre compatible le monde Linux avec le monde Windows. Historiquement le projet [Cygwin](https://en.wikipedia.org/wiki/Cygwin) né en 1995 a été le premier à proposer une telle couche. Il s'agissait d'un environnement POSIX pour Windows muni d'un terminal, d'un gestionnaire de paquets et d'une bibliothèque d'émulation POSIX. Les outils en ligne de commande type `ls`, `cat` ou même `grep` étaient proposés. Néanmoins, Cygwin n'était pas parfait, il nécessitait son propre environnement de travail et n'était pas bien intégré à Windows. Le projet [MSYS](https://en.wikipedia.org/wiki/MSYS) a été créé en 2003 pour pallier à ces problèmes. Il s'agissait d'une couche d'abstraction POSIX pour Windows qui se voulait plus légère. Au lieu de compiler des applications Linux qui devaient impérativement être lancées sous Cygwin, MSYS intégrait la couche d'abstraction dans les applications elles-mêmes, ces dernières étaient compilées en `.exe` et pouvaient être lancées directement depuis l'explorateur Windows. MSYS a été un franc succès et a été intégré dans le projet [MinGW](https://en.wikipedia.org/wiki/MinGW) (Minimalist GNU for Windows) qui est un portage de GCC pour Windows.
 
-1. rethink the unit and form of scholarly publication;
-2. develop tools and technologies to better support the scholarly lifecycle; and
-3. add data, software, and workflows as first-class research objects.
+Lorsque vous installez `Git` sous Windows et que vous visitez l'emplacement d'installation (`C:\Program Files\Git`), vous verrez des dossiers aux noms compatibles `POSIX` comme `bin`, `etc`, `lib`, `usr`, etc. Le dossier `bin` qui contient les exécutables contient `bash` qui n'est rien d'autre que le terminal utilisé sous Linux. La raison est que `Git` ou même `Python` sont des outils avant tout développés pour les environnements Unix/Linux.
 
-By bringing professional, high-quality tools for science communication into the research lifecycle, we believe we can improve the collection and preservation of scholarly metadata (citations, cross-references, annotations, etc.) as well as open up new ways to communicate science with interactive figures & equations, computation, and reactivity.
+Le choix de l'environnement de travail est donc compliqué. Faut-il travailler sous Windows avec les limitations que le portage des applications Linux implique ou faut-il travailler sous Linux directement ? Un ingénieur reste  aujourd'hui attaché au monde Windows car il dépend de logiciels comme `SolidWorks` ou `Altium Designer` qui ne sont pas disponibles sous Linux. Il est donc nécessaire de trouver un compromis.
 
-The tools that are being built by the ExecutableBooks project are focused on introducing a new Markup language, MyST (Markedly Structured Text), that works seamlessly with the Jupyter community to enhance and promote a new path to document creation and publishing for next-generation scientific textbooks, blogs, and lectures. Our team is currently supported by the [Sloan Foundation](https://sloan.org), ([Grant #9231](https://sloan.org/grant-detail/9231)).
+En 2016, Microsoft a annoncé le support de Linux dans Windows 10. Il s'agissait d'une couche d'abstraction qui permettait de faire tourner des applications Linux directement sous Windows. Cette couche d'abstraction s'appelle [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) (WSL). Elle est basée sur une technologie de virtualisation de conteneurs. WSL a été un franc succès et il a très vite été adopté par les développeurs Web. Il fut de surcroît proposé comme une alternative à Cygwin et MSYS.
 
-MyST enables rich content generation and is a powerful format for scientific and technical communication. JupyterBook uses MyST and has broad adoption in publishing tutorials and educational content focused around Jupyter Notebooks.
+WSL a été amélioré au fil des années et en 2019, Microsoft a annoncé WSL 2. WSL 2 est basé sur une technologie de virtualisation de type 2 (hyperviseur) et non plus de type 1 (noyau Linux). WSL 2 est donc plus performant que WSL 1. Il est possible de faire tourner un serveur web ou même un serveur de base de données directement sous WSL 2. WSL 2 est maintenant une alternative crédible à Linux.
 
-> The components behind Jupyter Book are downloaded 30,000 times a day, with 750K downloads last month.
+Il rend possible de travailler sous Windows et de faire tourner des applications Linux directement sous Windows.
 
-The current toolchain used by [JupyterBook] is based on [Sphinx], which is an open-source documentation system used in many software projects, especially in the Python ecosystem. `mystjs` is a similar tool to [Sphinx], however, designed specifically for scientific communication. In addition to building websites, `mystjs` can also help you create scientific PDFs, Microsoft Word documents, and JATS XML (used in scientific publishing).
+Le choix donné aux ingénieurs est donc :
 
-`mystjs` uses existing, modern web-frameworks in place of the [Sphinx] build system. These tools come out-of-the-box with prefetching for faster navigation, smaller network payloads through modern web-bundlers, image optimization, partial-page refresh through single-page application. Many of these features, performance and accessibility improvements are difficult, if not impossible, to create inside of the [Sphinx] build system.
+1. **Choix facile mais source d'incohérences**: Travailler exclusivement sous Windows et installer `Python`, `Git`, `LaTeX` sous Windows. L'inconvénient est que chacune de ses applications ne profitent pas d'une unité de travail commune. A force d'installer des applications, vous aurez dans votre système plusieurs installation de Python, plusieurs exécutables Git ce qui peut vite devenir compliqué à gérer.
+2. **Choix plus difficile mais offrant davantage de flexibilité**: Travailler sous WSL 2 et de faire tourner `Python`, `Git`, `LaTeX` sous Linux. L'avantage est que vous aurez une unité de travail commune. Vous pourrez installer des applications Linux directement depuis le gestionnaire de paquets de votre distribution Linux. Néanmoins vous devrez vous familiariser avec la ligne de commande Linux.
 
-In 2022, the Executable Books team started work to document the specification behind the markup language, called [myst-spec](https://github.com/executablebooks/myst-spec), this work has enabled other tools and implementations in the scientific ecosystem to build on MyST (e.g. [scientific authoring tools](https://curvenote.com/for/writing), and [documentation systems](https://blog.readthedocs.com/jupyter-book-read-the-docs/)).
+## Le terminal
 
-The `mystjs` ecosystem was developed as a collaboration between [Curvenote], [2i2c] and the [ExecutableBooks] team. The initial version of `mystjs` was originally release by [Curvenote] as the [Curvenote CLI](https://curvenote.com/docs/cli) under the MIT license, and transferred to the [ExecutableBooks] team in October 2022. The goal of the project is to enable the same rich content and authoring experiences that [Sphinx] allows for software documentation, with a focus on web-first technologies (Javascript), interactivity, accessibility, scientific references (e.g. DOIs and other persistent IDs), professional PDF outputs, and JATS XML documents for scientific archiving.
+Historiquement sous Windows, le terminal était une application graphique appelée `cmd`. Elle n'a pas évoluée depuis Windows NT. Son interface est limitée à un nombre fini de caractères par ligne et ne supportait que quelques couleurs. Elle ne supportait pas les caractères Unicode et ne supportait pas les raccourcis clavier comme `Ctrl+C` ou `Ctrl+V`.
 
-## MyST Project
+Heursement Windows a évolué et propose PowerShell. PowerShell est un terminal plus moderne qui supporte les couleurs, les raccourcis clavier, les caractères Unicode, etc. PowerShell est un terminal plus puissant que `cmd`.
 
-In this paper we introduce `mystjs`, which allows the popular MyST Markdown syntax to be run directly in a web browser, opening up new workflows for components to be used in web-based editors, [directly in Jupyter](https://github.com/executablebooks/jupyterlab-myst) and in JupyterLite. The libraries work with current MyST Markdown documents/projects and can export to [LaTeX/PDF](https://myst.tools/docs/mystjs/creating-pdf-documents), [Microsoft Word](https://myst.tools/docs/mystjs/creating-word-documents) and [JATS](https://myst.tools/docs/mystjs/creating-jats-xml) as well as multiple website templates using a [modern](https://myst.tools/docs/mystjs/accessibility-and-performance) React-based renderer. There are currently over 400 scientific journals that are supported through [templates](https://github.com/myst-templates), with [new LaTeX templates](https://myst.tools/docs/jtex/create-a-latex-template) that can be added easily using a Jinja-based templating package, called [jtex](https://myst.tools/docs/jtex).
+L'interface du terminal était également rudimentaire (pas d'onglets, pas de séparateurs, etc.). Heureusement Windows propose depuis 2019 [Windows Terminal](https://en.wikipedia.org/wiki/Windows_Terminal). Windows Terminal est un terminal moderne multi-onglets qui supporte plusieurs terminaux (cmd, PowerShell, WSL, etc.). S'il n'est pas installé vous pouvez le faire via le [Microsoft Store](https://www.microsoft.com/fr-ch/p/windows-terminal/9n0dx20hk701).
 
-In our paper we will give an overview of the MyST ecosystem, how to use MyST tools in conjunction with existing Jupyter Notebooks, markdown documents, and JupyterBooks to create professional PDFs and interactive websites, books, blogs and scientific articles. We give special attention to the additions around structured data, standards in publishing (e.g. efforts in representing Notebooks as JATS XML), rich [frontmatter](https://myst.tools/docs/mystjs/frontmatter) and bringing [cross-references](https://myst.tools/docs/mystjs/cross-references) and [persistent IDs](https://myst.tools/docs/mystjs/external-references) to life with interactive hover-tooltips ([ORCID, RoR](https://myst.tools/docs/mystjs/frontmatter), [RRIDs](https://myst.tools/docs/mystjs/external-references#research-resource-identifiers), [DOIs](https://myst.tools/docs/mystjs/citations), [intersphinx](https://myst.tools/docs/mystjs/external-references#intersphinx), [wikipedia](https://myst.tools/docs/mystjs/external-references#wikipedia-links), [JATS](https://myst.tools/docs/mystjs/typography), [GitHub code](https://myst.tools/docs/mystjs/external-references#github-links), and more!). This rich metadata and structured content can be used directly to improve science communication both through self-publishing books, blogs, and lab websites — as well as journals that incorporate Jupyter Notebooks.
+```{figure} images/cmd.png
+:alt: cmd.exe
+:width: 500px
+:align: center
+:figclass: margin
 
-## Features of MyST
+Interface de cmd.exe dans Windows Terminal
+```
 
-MyST is focused on scientific writing, and ensuring that citations are first class both for writing and for reading (see Figure 1).
+```{figure} images/powershell.png
+:alt: powershell.exe
+:width: 500px
+:align: center
+:figclass: margin
 
-![](./images/citations.png)
-**Figure 1**: Citations are rendered with a popup directly inline.
+Interface de PowerShell dans Windows Terminal
+```
 
-MyST aims to show as much information in context as possible, for example, Figure 2 shows a reading experience for a referenced equation: you can immediately **click on the reference**, see the equation, all without loosing any context -- ultimately saving you time. Head _et al._ (2021) found that these ideas both improved the overall reading experience of articles as well as allowed researchers to answer questions about an article **26% faster** when compared to a traditional PDF!
+```{figure} images/bash.png
+:alt: Ubuntu
+:width: 500px
+:align: center
+:figclass: margin
 
-![](./images/equations.gif)
-**Figure 2**: In context cross-references improve the reading experience.
+Interface de Ubuntu dans Windows Terminal
+```
 
-One of the important underlying goals of practicing reproducibility, sharing more of the methods and data behind a scientific work so that other researchers can both verify as well as build upon your findings. One of the exciting ways to pull for reproducibility is to make documents directly linked to data and computation! In Figure 3, we are showing outputs from a Jupyter Notebook directly part of the published scientific narrative.
+## Git
 
-![](./images/interactive.gif)
-**Figure 3**: Embedding data, interactivity and computation into a MyST article.
+Git est un outil de gestion de versions. Il a été inventé par Linus Torvalds en 2005 pour gérer le développement du noyau Linux qui contient des millions de lignes de code devant être modifiées par des centaines de milliers de développeurs. Git a été conçu pour être rapide, efficace et pour gérer des projets de toutes tailles. Il est aujourd'hui le système de gestion de version le plus utilisé au monde.
 
-To drive all of these features, the contents of a MyST document needs to be well defined. This is critical for powering interactive hovers, linked citations, and compatibility with scientific publishing standards like the Journal Article Metadata Tag Suite (JATS). We have an emerging specification for MyST, [`myst-spec`](https://spec.myst.tools), that aims to capture this information and transform it between many different formats, like PDF, Word, JSON, and JATS XML (Figure 4). This specification is arrived at through a community-centric MyST Enhancement Proposal ([MEP](https://compass.executablebooks.org/en/latest/meps.html)) process.
+Git est la suite logique des outils comme `CVS` ou `Subversion` qui étaient utilisés pour gérer des projets de développement de logiciels.
 
-![](./images/structured-data.gif)
-**Figure 4**: The data behind MyST is **structured**, which means we can transform it into many different document types and use it to power all sorts of exciting features!
+Git est avant tout un outil en ligne de commande. Son utilisation passe par la commande `git` suivi d'une sous-commande (`clone`, `pull`, `push`, `commit`, etc.). Il est possible de l'utiliser avec une interface graphique mais l'interface en ligne de commande est plus puissante, plus rapide et plus flexible.
 
-One of the common forms of scientific communication today is through PDF documents. MyST has excellent support for creating PDF documents, using a data-driven templating library called `jtex`. The document in Figure 5 was created using MyST!
+Un dépôt (référentiel) Git est un dossier qui contient un dossier caché `.git`. Ce dossier contient l'historique des modifications du projet. Ne supprimez pas ce dossier, vous perdriez l'historique de votre projet. Lorsque vous faites des *commit* (sauvegarde incrémentationnelle), Git enregistre les modifications dans ce dossier caché et lorsque vous faites un *push* (envoi des modifications sur un serveur distant), Git envoie les modifications à un serveur distant (GitHub, GitLab, Bitbucket, etc.).
 
-![](./images/pdf-two-column.png)
-**Figure 5**: A PDF rendering through MyST.
+Par conséquent, l'utilisation de Git est intrincèquement liée à l'utilisation d'un serveur distant. Il est possible de travailler en local mais l'intérêt de Git est de pouvoir travailler en équipe. Il est possible de travailler sur une branche (version parallèle du projet) et de fusionner les modifications avec la branche principale (master).
 
-## Conclusion
+Ceci implique de comprendre comment Git communique avec un serveur distant. Notons qu'il est possible de travailler avec plusieurs serveurs distants. Ils se configure avec la commande `git remote`. Deux protocoles de communication existent : `SSH ` et `HTTPS`. Le protocole `SSH` est plus sécurisé que `HTTPS` mais nécessite l'échange de clés cryptographiques. Le protocole `HTTPS` est plus simple à mettre en place mais demande un mot de passe ou un jeton d'authentification à chaque communication avec le serveur distant. La solution recommandée est d'utiliser `SSH`.
 
-There are many opportunities to improve open-science communication, to make it more interactive, accessible, more reproducible, and both produce and use structured data throughout the research-writing process. The `mystjs` ecosystem of tools is designed with structured data at its core. We would love if you gave it a try -- learn to get started at <https://myst.tools>.
+## Variables d'environnement
 
-## References
+Que vous soyez sous POSIX ou Windows, votre système d'exploitation dispose de variables d'environnement. Il s'agit de variables qui sont accessibles par toutes les applications. Elles sont utilisées pour stocker des informations comme le chemin d'accès à un exécutable, le nom de l'utilisateur, le répertoire de travail, etc.
 
-Bourne, Philip E., Clark, Timothy W., Dale, Robert, De Waard, Anita, Herman, Ivan, Hovy, Eduard H., Shotton, David. (2012)"Improving The Future of Research Communications and e-Scholarship". FORCE11. doi:10.4230/DAGMAN.1.1.41
+La variable la plus importante est `PATH`. Elle contient une liste de chemins d'accès aux exécutables. Lorsque vous tapez une commande dans un terminal, le système d'exploitation parcourt les chemins d'accès de la variable `PATH` pour trouver l'exécutable correspondant à la commande. Si vous avez installé Python, Git, LaTeX, etc. dans des répertoires différents, il est nécessaire de les ajouter à la variable `PATH`. Parfois les installateurs le font automatiquement, parfois non. Il est donc nécessaire de vérifier manuellement.
 
-Head, A., Lo, K., Kang, D., Fok, R., Skjonsberg, S., Weld, D. S., & Hearst, M. A. (2021, May). Augmenting Scientific Papers with Just-in-Time, Position-Sensitive Definitions of Terms and Symbols. Proceedings of the 2021 CHI Conference on Human Factors in Computing Systems. 10.1145/3411764.3445648
+Une variable d'environnement n'est propagée à un processus que si ce dernier est lancé après la modification de la variable. Si vous modifiez la variable `PATH` les processus déjà lancés ne verront pas la modification. Il est nécessaire de fermer le terminal et de le rouvrir (relancer Visual Studio Code, votre terminal, etc.).
 
-[2i2c]: https://2i2c.org/
-[curvenote]: https://curvenote.com
-[docutils]: https://docutils.sourceforge.io/
-[executablebooks]: https://executablebooks.org/
-[jupyterbook]: https://jupyterbook.org/
-[jupyterlab-myst]: https://github.com/executablebooks/jupyterlab-myst
-[sphinx]: https://www.sphinx-doc.org/
+Parfois si vous installez plusieurs version d'un même logiciel comme `Python` vous pourriez avoir plusieurs variables d'environnement qui pointent vers des versions différentes de Python. C'est une source de confusion et c'est un problème fréquent sous Windows. Vous pouvez vérifier quel est le chemin d'accès à un exécutable avec la commande `where` sous Windows et `which` sous Linux.
+
+- Linux/WSL/MacOS
+
+  ```bash
+  $ which python
+  /usr/bin/python
+  ```
+
+- Windows
+  - `cmd`
+
+    ```cmd
+    PS C:\> where python
+    C:\Python39\python.exe
+    ```
+
+  - `PowerShell`
+
+    ```powershell
+    PS C:\> Get-Command python
+    ```
+
+## Installation
+
+### Git
+
+#### Installation de Git
+
+Pour installer Git sous Windows, le plus simple est d'utiliser le nouveau gestionnaire de paquet de Windows appelé `winget`. Ouvrez un terminal `PowerShell` et tapez la commande suivante issue de [Winget Git/Git](https://winget.run/pkg/Git/Git)
+
+```powershell
+winget install -e --id Git.Git
+```
+
+Sous Linux, et particulièrement Ubuntu, Git est probablement déjà installé par défaut. Si ce n'est pas le cas, avec Ubuntu ouvrez un terminal Bash et tapez la commande suivante :
+
+```bash
+sudo apt install git
+```
+
+> [!NOTE]
+> Selon la distribution Linux que vous utilisez, les gestionnaires de paquets n'ont pas le même nom. Sous Fedora, le gestionnaire de paquets est `dnf` et sous Arch Linux, le gestionnaire de paquets est `pacman`. Néanmoins la commande reste très similaire.
+
+Sous MacOS, Git est probablement déjà installé. Si ce n'est pas le cas, vous pouvez installer Git avec [Homebrew](https://brew.sh) en tapant la commande suivante dans un terminal :
+
+```bash
+brew install git
+```
+
+#### Configuration de Git
+
+##### Utilisateur et adresse e-mail
+
+La première chose à faire après avoir installé Git est de le configurer. Ouvrez un terminal et tapez les commandes suivantes en veillant bien à remplacer `John Doe` par votre nom et `john.doe@acme.com` par votre adresse e-mail.
+
+```bash
+git config --global user.name "John Doe"
+git config --global user.email john.doe@acme.com
+```
+
+Ces informations sont utilisées pour chaque *commit* que vous ferez. Elles sont importantes car elles permettent de savoir qui a fait une modification dans le projet. Ne vous trompez pas dans votre nom ou votre adresse e-mail, il est difficile de changer ces informations une fois qu'elles ont été enregistrées dans un *commit*, et surtout si elle ont été envoyées sur un serveur distant.
+
+##### Méthode de fusion (*merge*)
+
+Lorsque vous utilisez la commande `git pull` pour récupérer les modifications d'un serveur distant, Git peut être amené à fusionner des modifications. Il est possible de choisir la méthode de fusion. Les deux méthodes les plus courantes sont `merge` et `rebase`. La méthode `merge` est la méthode par défaut. La méthode `rebase` est plus avancée et est utilisée pour réécrire l'historique du projet. Elle est plus propre mais elle peut être source de problèmes si elle est mal utilisée. Git s'attend à que vous configuriez laquelle des deux méthodes vous préférez. Vous pouvez le faire avec la commande suivante :
+
+Pour le rebase :
+
+```bash
+git config --global pull.rebase true
+```
+
+Pour le merge :
+
+```bash
+git config --global pull.rebase false
+```
+
+> [!NOTE]
+> La méthode `rebase` est plus propre mais elle peut être source de problèmes si elle est mal utilisée. Elle est recommandée pour les projets personnels mais pas pour les projets en équipe. En cas de doute privilégiez la méthode `merge`.
+
+##### Affichage de l'historique des commits (*log*)
+
+Lorsque vous utilisez la commande `git log` pour afficher l'historique des *commits*, Git affiche les *commits* dans un format compact. Il est possible de personnaliser l'affichage de l'historique des *commits*. Vous pouvez le faire avec la commande suivante :
+
+```bash
+git config --global alias.lg "log -n30 --boundary --graph --pretty=format:'%C(bold blue)%h%C(bold green)%<|(20)% ar%C(reset)%C(white)% s %C(dim white)-% an%C(reset)%C(auto)% d%C(bold red)% N' --abbrev-commit --date=relative"
+```
+
+Dès lors vous utiliserez le raccourcis `lg` pour afficher l'historique des *commits* (`git lg`).
+
+Pour afficher la date en format ISO 8601, vous pouvez utiliser la commande suivante :
+
+```bash
+git config --global alias.lga "log -n30 --boundary --graph --pretty=format:'%C(bold blue)%h%C(bold green)%<|(20)% ai%C(reset)%C(white)% s %C(dim white)-% an%C(reset)%C(auto)% d%C(bold red)' --abbrev-commit --date=iso"
+```
+
+##### Configuration SSH
+
+Comme nous l'avons vu, Git peut communiquer avec un serveur distant en utilisant le protocole `SSH`. Pour cela, il est nécessaire de configurer une clé cryptographique.
+
+La première chose à faire est de vérifier si vous avez déjà une clé SSH. Ouvrez un terminal et tapez la commande suivante :
+
+```bash
+$ ls -al ~/.ssh/*.pub
+-rw-r--r-- 1 ycr ycr 393 2023-09-06 08:38 /home/ycr/.ssh/id_rsa.pub
+```
+
+Le fichier `id_rsa.pub` est votre clé publique. Si vous ne voyez pas ce fichier, c'est que vous n'avez pas de clé SSH. Vous pouvez en générer une avec la commande suivante :
+
+```bash
+ssh-keygen
+```
+
+Sous Windows, la commande est la même mais vous devez lancer `Git Bash` pour l'exécuter. Vous pouvez lancer `Git Bash` en tapant `Git Bash` dans le menu de recherche de Windows.
+
+##### Configuration de GitHub
+
+Si vous utilisez GitHub, il est nécessaire de configurer votre clé SSH dans votre compte GitHub. Pour cela, ouvrez un terminal et tapez la commande suivante :
+
+```bash
+$ cat ~/.ssh/id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC+yNp7af6zI8NINIFX1aRj+nzKksZ6XzBSkgA/iuPpYIGz5SSZOkwkvN0DnX8J42DcuEK/mnu3+f9Wh746823gxhXqtj+7Wv9z9DJ9O9qrsYlnxIMipoqepE/Xt+jE5Yv8ullIdsvZdzY611R5DFwrVswslz9OdmpH6nWCmnY/cGZva79ngdcvJLKFk++fl+Be1xshWt24svawRH7Fdxn8VyUKmP2Twy6iMo3MT9xGe5leV1CiTXfkzLYntNV50/dtzQN+pwcwRBdXBP9FdO9+IzieY6bUGttT6t2VcWoK6jFF+i94Chl/FeGvRU1X/QzSP3SYT2biNRNmznSIa2VD ycr@heig-vd
+```
+
+Copiez la clé publique et collez-la dans votre compte GitHub. Pour cela, ouvrez votre navigateur et allez sur [GitHub](https://github.com). Connectez-vous à votre compte et cliquez sur votre photo de profil en haut à droite. Cliquez sur `Settings` puis sur `SSH and GPG keys`. Cliquez sur `New SSH key` et collez votre clé publique dans le champ `Key`. Donnez un nom à votre clé et cliquez sur `Add SSH key`.
+
+### Python
+
+#### Installation de Python
+
+Sous Linux/WSL, l'installation de Python est très simple. Ouvrez un terminal et tapez la commande suivante :
+
+```bash
+sudo apt install python3
+```
+
+Sous Windows, vous devez choisir la version de Python que vous souhaitez installer. Il est recommandé d'installer la version `3.12` de Python. Utilisez le gestionnaire de paquets `winget` pour installer Python. Ouvrez un terminal `PowerShell` et tapez la commande suivante :
+
+```powershell
+winget install -e --id Python.Python.3.12
+```
+
+#### Configuration des variables d'enviroonement
+
+Selon la méthode utilisée pour installer Python, il est possible que les variables d'environnement ne soient pas configurées automatiquement. Il y a deux entrées à configurer dans la variable `PATH` :
+
+1. Le chemin vers l'exécutable Python. Sous Linux/WSL, le chemin sera déjà configuré (`/usr/bin`). Sous Windows, le chemin diffère selon les époques, les installateurs et les versions.
+2. Le chemin vers les paquets locaux installés avec `pip`.
+
+Pour configurer sous Linux/WSL le chemin vers les paquets locaux installés avec `pip`, ouvrez un terminal et tapez la commande suivante :
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+Sous Windows, c'est plus compliqué. Selon l'installation de Python vous devez identifier le chemin vers le dossier `Scripts` qui contient les exécutables Python installés avec `pip`.
+
+#### Installation des paquets principaux
+
+Installons les paquets les plus couramment utilisés avec Python. Ouvrez un terminal et tapez les commandes suivantes :
+
+```bash
+pip install ipython numpy matplotlib pandas jupyterlab black flake8
+```
+
+### LaTeX
+
+Sous Linux/WSL, le plus simple est d'installer LaTeX avec le gestionnaire de paquets de votre distribution Linux. Ouvrez un terminal et tapez la commande suivante :
+
+```bash
+sudo apt install texlive-full latexmk
+```
+
+Sous Windows c'est plus compliqué. Il existe plusieurs distributions LaTeX pour Windows. La plus courante est [MiKTeX](https://miktex.org). Téléchargez l'installateur et suivez les instructions.
+
+## Commandes principales
+
+### Git
+
+| Commande | Description |
+| --- | --- |
+| `git init` | Initialise un dépôt Git dans le répertoire courant |
+| `git clone <address>` | Clone un dépôt distant dans le répertoire courant |
+| `git status` | Affiche l'état du dépôt |
+| `git add <file>` | Ajoute des fichiers à l'index |
+| `git commit -am "message"` | Enregistre les modifications dans l'historique du dépôt |
+| `git pull` | Récupère les modifications du serveur distant |
+| `git push` | Envoie les modifications sur le serveur distant |
+| `git log` | Affiche l'historique des *commits* |
+| `git lg` | Affiche l'historique des *commits* de manière plus lisible |
+
+### GCC
+
+| Commande | Description |
+| --- | --- |
+| `gcc` | Compilateur C |
+| `g++` | Compilateur C++ |
+| `make` | Gestionnaire de compilation |
+
+#### Compiler un programme C
+
+```bash
+gcc -o hello hello.c
+```
+
+#### Compiler un programme C++
+
+```bash
+g++ -o hello hello.cpp
+```
+
+#### Compiler plusieurs fichiers C
+
+```bash
+gcc -o hello main.c functions.c
+```
+
+#### Compiler séparément les fichiers C
+
+```bash
+gcc -c functions.c
+gcc -c main.c
+gcc -o hello main.o functions.o
+```
+
+### Linux/WSL
+
+| Commande | Description |
+| --- | --- |
+| `ls` | Liste les fichiers du répertoire courant |
+| `cd` | Change de répertoire |
+| `pwd` | Affiche le répertoire courant |
+| `cat` | Affiche le contenu d'un fichier |
+| `less` | Affiche le contenu d'un fichier page par page |
+| `grep` | Recherche une chaîne de caractères dans un fichier |
+| `find` | Recherche un fichier dans un répertoire |
+| `man` | Affiche le manuel d'une commande |
+| `which` | Affiche le chemin d'accès à un exécutable |
+
+#### Afficher les fichiers du répertoire courant
+
+```bash
+ls -al # Par noms
+ls -lt # Par date de modification
+ls -lh # En format lisible
+```
+
+### Python
+
+| Commande | Description |
+| --- | --- |
+| `python` | Lance l'interpréteur Python |
+| `pip` | Gestionnaire de paquets Python |
+| `ipython` | Lance l'interpréteur IPython |
+| `jupyter lab` | Lance l'environnement Jupyter Lab |
+
+### LaTeX
+
+| Commande | Description |
+| --- | --- |
+| `latexmk -xelatex` | Compile un document LaTeX |

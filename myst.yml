@@ -1,0 +1,25 @@
+# See docs at: https://mystmd.org/guide/frontmatter
+version: 1
+project:
+  id: ba0ae361-7168-43b6-bc30-230d745f8465
+  title: Environnement de travail pour étudiants
+  description: |
+    Ce document est un court guide pour les étudiants de la HEIG-VD qui souhaitent utiliser Git, Python, LaTeX.
+  keywords: [HEIG-VD, Git, Python, LaTeX]
+  authors:
+    - name: Prof. Yves Chevallier
+      email: yves.chevallier@heig-vd.ch
+      affiliation: HEIG-VD
+  github: https://github.com/executablebooks/mystmd-quickstart
+  # bibliography: []
+site:
+  logo_text: Environnement de travail
+  template: book-theme
+  # title:
+  # options:
+  #   logo: site_logo.png
+  nav: []
+  actions:
+    - title: HEIG-VD
+      url: https://heig-vd.ch
+  domains: []
