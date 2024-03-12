@@ -36,3 +36,33 @@ Installons les paquets les plus couramment utilisés avec Python. Ouvrez un term
 ```bash
 pip install ipython numpy matplotlib pandas jupyterlab black flake8
 ```
+
+## Environnement virtuel
+
+Lorsque vous installez des paquets avec PIP, un système complexe de gestion de dépendences est mis en place. Par exemple si vous installez `numpy`, `matplotlib` sera installé automatiquement. Chaque paquet dépend d'autres paquets.
+
+Il n'est pas rare d'avoir des conflits entre les versions des paquets. Par exemple, si vous avez un projet qui utilise `numpy` en version `1.20` et un autre projet qui utilise `numpy` en version `1.21`, vous aurez des problèmes.
+
+Pour éviter ces problèmes, il est recommandé d'utiliser un environnement virtuel.
+
+Un environnement virtuel est un dossier local au projet sur lequel vous travaillez qui contient une installation de Python, un gestionnaire de paquets PIP et un ensemble de paquets. Chaque environnement virtuel est indépendant des autres. Vous pouvez avoir autant d'environnements virtuels que vous le souhaitez.
+
+La gestion d'environnement virtuels à beaucoup évolué avec les versions de Python. Il existe plusieurs outils que l'on peut confondre:
+
+- `venv` est un module de la bibliothèque standard de Python depuis la version 3.3 qui permet de créer des environnements virtuels. Il est recommandé d'utiliser `venv` pour les projets personnels.
+- `virtualenv` est un outil plus ancien disponible pour Python 2 et 3. Il n'est pas recommandé de l'utiliser.
+- `poetry` est un outil externe. Utile pour tester des projets sur différentes versions de Python; facilite la migration entre les versions.
+
+Pour créer un environnement virtuel avec `venv`, ouvrez un terminal et tapez les commandes suivantes :
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Sous Windows, la commande est différente :
+
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate
+```
